@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const API_URL = 'http://localhost:5000/api/jobs';
+const API_URL = 'https://student-web-tracker-backend.onrender.com/api/jobs';
 
 
 interface Job {
