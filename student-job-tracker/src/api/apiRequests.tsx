@@ -75,3 +75,25 @@ export const updateJobStatus = async (id: string, status: string): Promise<Job> 
     throw error;
   }
 };
+
+
+
+
+
+const getFilteredJobs = async (status: string, startDate: string, endDate: string): Promise<Job[]> => {
+  const queryParams = new URLSearchParams();
+
+  if (status) queryParams.append('status', status);
+  if (startDate) queryParams.append('startDate', startDate);
+  if (endDate) queryParams.append('endDate', endDate);
+
+  try {
+    const response = await axios.get(`/api/jobs/filter?${queryParams.toString()}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching filtered jobs:", error);
+    return [];
+  }
+};
+
+export { getFilteredJobs };

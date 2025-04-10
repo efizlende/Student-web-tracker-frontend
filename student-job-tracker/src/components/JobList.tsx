@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface Job {
   _id: string;
   company: string;
   role: string;
   status: string;
+  appliedDate: string; 
 }
 
 interface JobListProps {
@@ -14,11 +15,53 @@ interface JobListProps {
 }
 
 const JobList: React.FC<JobListProps> = ({ jobs, onDelete, onUpdateStatus }) => {
+  
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [startDateFilter, setStartDateFilter] = useState<string>('');
+  const [endDateFilter, setEndDateFilter] = useState<string>('');
+
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesStatus = statusFilter ? job.status === statusFilter : true;
+    const matchesStartDate = startDateFilter ? new Date(job.appliedDate) >= new Date(startDateFilter) : true;
+    const matchesEndDate = endDateFilter ? new Date(job.appliedDate) <= new Date(endDateFilter) : true;
+
+    return matchesStatus && matchesStartDate && matchesEndDate;
+  });
+
   return (
     <div className="container bg-light p-5 rounded shadow-sm mt-4">
       <h1 className="mb-4 text-center">Job List</h1>
 
-      {/* Tabela Responsiva */}
+ 
+      <div className="mb-4">
+        <select 
+          className="form-select mb-2" 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="">All Status</option>
+          <option value="Applied">Applied</option>
+          <option value="Interview">Interview</option>
+          <option value="Offer">Offer</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+
+        <input
+          type="date"
+          className="form-control mb-2"
+          value={startDateFilter}
+          onChange={(e) => setStartDateFilter(e.target.value)}
+        />
+        <input
+          type="date"
+          className="form-control mb-2"
+          value={endDateFilter}
+          onChange={(e) => setEndDateFilter(e.target.value)}
+        />
+      </div>
+
+   
       <div className="table-responsive">
         <table className="table table-striped table-bordered">
           <thead>
@@ -26,17 +69,19 @@ const JobList: React.FC<JobListProps> = ({ jobs, onDelete, onUpdateStatus }) => 
               <th>Company</th>
               <th>Role</th>
               <th>Status</th>
+              <th>Applied Date</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {jobs.map((job) => (
+            {filteredJobs.map((job) => (
               <tr key={job._id}>
                 <td>{job.company}</td>
                 <td>{job.role}</td>
                 <td>{job.status}</td>
+                <td>{new Date(job.appliedDate).toLocaleDateString()}</td>
                 <td>
-                  {/* Botões responsivos */}
+                  
                   <div className="d-flex flex-column flex-sm-row gap-2">
                     <button 
                       className="btn btn-warning mb-2 mb-sm-0 w-100 w-sm-auto"
